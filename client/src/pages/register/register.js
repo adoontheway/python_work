@@ -1,6 +1,11 @@
 
 import React from 'react';
+import DatePicker from 'react-datepicker';
+import axios from 'axios';
 import './register.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import NetUtil from '../../util/net';
+
 
 class Register extends React.Component {
     
@@ -23,7 +28,7 @@ class Register extends React.Component {
     }
     handleBirthdayChanged(e){
         this.setState({
-            birthday : e.target.value,
+            birthday : e,
         })
     }
     handlePhoneChanged(e){
@@ -43,18 +48,23 @@ class Register extends React.Component {
     }
     handlePhotoChanged(e){
         this.setState({
-            photo : e.target.value,
+            photo : e.target.files[0],
         })
     }
     handleSubmit(e){
         e.preventDefault();
-        let username = this.state.username;
-        let password = this.state.password;
-        fetch('http://localhost:8080/user/register',{
-            method:'POST',
-            mode:'cors',
-            body:JSON.stringify({username:username, password:password})
-        })
+        let formData = new FormData();
+        formData.append("name", this.state.name);
+        formData.append('birthday', this.state.birthday);
+        formData.append('phone', this.state.phone);
+        formData.append('email', this.state.email);
+        formData.append('address',this.state.address);
+        formData.append('photo', this.state.photo);
+        NetUtil.postForm('http://localhost:8080/user/register',formData,(res)=>{this.onSubmitBack(res)})
+    }
+
+    onSubmitBack(res){
+        console.log(res)
     }
 
     render(){
@@ -63,7 +73,7 @@ class Register extends React.Component {
                 <h1>Register</h1>
                 <form onSubmit={(e)=>this.handleSubmit(e)} className="row">
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                        <label className="input-group-text" >Name</label>
                         <input 
                             type="text" 
                             required
@@ -75,60 +85,62 @@ class Register extends React.Component {
                     </div>
                     <div className='input-group input-group-sm mb-3'>
                         <span className="input-group-text" id="inputGroup-sizing-sm">Birthday</span>
-                        <input 
-                            type="password" 
+                        {/* <input 
+                            type="text" 
                             required
                             name="password" 
                             className='form-control'
                             value={this.state.password} 
                             onChange={(e)=> this.handleAddressChanged(e)}
-                        />
+                        /> */}
+                        <DatePicker required className='form-control' selected={this.state.birthday} onChange={(date)=>this.handleBirthdayChanged(date)}/>
                     </div>
 
                     <div className='input-group input-group-sm mb-3'>
                         <span className="input-group-text" id="inputGroup-sizing-sm">Phone</span>
                         <input 
-                            type="password" 
+                            type="text" 
                             required
-                            name="password" 
+                            name="phone" 
                             className='form-control'
-                            value={this.state.password} 
-                            onChange={(e)=> this.handleAddressChanged(e)}
+                            value={this.state.phone} 
+                            onChange={(e)=> this.handlePhoneChanged(e)}
                         />
                     </div>
 
                     <div className='input-group input-group-sm mb-3'>
                         <span className="input-group-text" id="inputGroup-sizing-sm">Email</span>
                         <input 
-                            type="password" 
+                            type="email" 
                             required
-                            name="password" 
+                            name="email" 
                             className='form-control'
-                            value={this.state.password} 
-                            onChange={(e)=> this.handleAddressChanged(e)}
+                            value={this.state.email} 
+                            onChange={(e)=> this.handleEmailChanged(e)}
                         />
                     </div>
 
                     <div className='input-group input-group-sm mb-3'>
                         <span className="input-group-text" id="inputGroup-sizing-sm">Address</span>
                         <input 
-                            type="password" 
+                            type="text" 
                             required
-                            name="password" 
+                            name="address" 
                             className='form-control'
-                            value={this.state.password} 
+                            value={this.state.address} 
                             onChange={(e)=> this.handleAddressChanged(e)}
                         />
                     </div>
                     <div className='input-group input-group-sm mb-3'>
                         <span className="input-group-text" id="inputGroup-sizing-sm">Photo</span>
                         <input 
-                            type="password" 
+                            type="file" 
                             required
-                            name="password" 
+                            name="photo" 
+                            accept='image/*'
                             className='form-control'
-                            value={this.state.password} 
-                            onChange={(e)=> this.handleAddressChanged(e)}
+                            value={this.state.photo} 
+                            onChange={(e)=> this.handlePhotoChanged(e)}
                         />
                     </div>
                     <div className='d-grid gap-2'>
