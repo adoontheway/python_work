@@ -1,11 +1,21 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState  } from 'react';
+
+import {Routes, Route} from 'react-router-dom';
+
 import Login from './pages/login/login';
 import Register from './pages/register/register';
+import ListPage from './pages/list/list';
 
 function App() {
-  return <Register />
+  return (
+    <Routes>
+      <Route path='/' element={<Login />}></Route>
+      <Route path='/register' element={<Register />}></Route>
+      <Route path='/list' element={<ListPage />}></Route>
+    </Routes>
+  )
+  // return <Register />
   // const [token, setToken] = useState();
   // if(!token){
   //   return <Login setToken={setToken}></Login>

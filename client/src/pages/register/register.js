@@ -5,6 +5,7 @@ import axios from 'axios';
 import './register.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import NetUtil from '../../util/net';
+import { Navigate } from 'react-router-dom';
 
 
 class Register extends React.Component {
@@ -18,6 +19,7 @@ class Register extends React.Component {
             email:"",
             address:"",
             photo:"",
+            success: false
         }
     }
 
@@ -65,9 +67,15 @@ class Register extends React.Component {
 
     onSubmitBack(res){
         console.log(res)
+        this.setState({
+            success:true
+        })
     }
 
     render(){
+        if(this.state.success){
+            return <Navigate to={"/list"} replace={true}/>
+        }
         return (
             <div className="container">
                 <h1>Register</h1>
