@@ -1,62 +1,46 @@
 # python_work
 
 
-# Tech Stack
+## Tech Stack
 
-## Client
+### Client
 * react/react-datepicker
 * axios
-* bootstrap
+* bootstrap - ui
 * cnpm
 
-## Server
-* django
+### Server
+* flask
+* sqlite
 * conda
 
-# Design
-## Restful Api
+### db
+please refer to [shcema.sql](./backend/schema.sql)
+
+## How to run 
+```sh
+./start.sh
+```
+
+## Screenshots
+login page, include register hyper link and login logic
+![Login](./screenshots/login.png)
+
+register page, include login hyper link and forms for register 
+![Register](./screenshots/register.png)
+
+user list, only for admin check users, include a simple pager
+![list](./screenshots/list.png)
+
+## Design
+### Restful Api
 | api | method | Data| Description |
 |----------|--------|-------------|----------|
-|index       |  get|None |login page,no server required|
+|index       |  get|None |login page,only frontend,no server required|
 |user/register|post|name, birthday,phone number,email, addr,photo|user registration|
 |user/login|post|email or phone| a login page|
 |user/list|post|None|list all users, only for admin?|
-|user/logout|get|None|logout the server|
 
-
-## Storage
-
-### 1.Mongo
-I can not sure docker is install on you guys device.
-docker + mongodb
-```js
-{
-    'name':string,
-    'birthday':ISODateTime,
-    'phone':string,
-    'email':string,
-    'address':string,
-    'photo':string,
-    'salt':string,
-    'token':string
-}
-```
-### 2.sqlite
-```sql
-
-```
-### 3.local file system
-
-```sh
-./data/dat
-```
-| name | byte-length | description |
-| ------- | -------- | ----------- |
-| version   | 8 | .dat version |
-| enc type | 8 | data encryption type |
-| compress algorithm| 8 | compress algorithm type |
-| length | 32 | data length |
-| data | length | the local data itself |
 
 ## Test
-no time for unit test now
+apologize for this, no time to apply unit test for both side.

@@ -1,3 +1,11 @@
-./build_client.sh
+cd ./backend
 
-python manage.py runserver 8080
+pip install -r requirements.txt
+
+./init_db.sh
+
+./run.sh &
+
+cd ../client
+cnpm i --save
+npm start &

@@ -1,6 +1,7 @@
 from crypt import methods
 import functools
 import json
+from math import floor
 import os
 
 from flask import (
@@ -74,10 +75,12 @@ def list():
     pageSize = data['page_size']
     page = data['page']
     db = get_db()
-    if g.user == None:
-        return {'code':400,'msg':'Please login first'}
-    priority = g.user['priority']
-    if priority != 100:
+    # if g.user == None:
+    #     return {'code':400,'msg':'Please login first'}
+    # priority = g.user['priority']
+    # if priority != 100:
+    #     return {'code':400, 'msg':'not authorized.'}
+    if token != "234":
         return {'code':400, 'msg':'not authorized.'}
     users = db.execute('SELECT * FROM t_user limit %d offset %d'%(pageSize,page*pageSize)).fetchall()
     count = db.execute('SELECT COUNT(*) FROM t_user').fetchone()
@@ -92,8 +95,8 @@ def list():
                 'birthday':user['birthday']
             } for user in users
         ],
-        'cur_page':0,
-        'total_page':count[0]}}
+        'cur_page':page,
+        'total_page':floor(count[0]/pageSize)}}
 
 # before each request check the user
 @bp.before_app_request

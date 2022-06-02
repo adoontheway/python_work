@@ -29,7 +29,16 @@ class ListPage extends React.Component {
         }else{
             alert(res.data.msg)
         }
-        
+    }
+
+    onPrePage(){
+        if(this.state.curPage <= 0) return 
+        NetUtil.postJson('user/list',{page:this.state.curPage-1,page_size:10},(res)=> this.onUserList(res))
+    }
+
+    onNextPage(){
+        if(this.state.curPage >= this.state.maxPage) return 
+        NetUtil.postJson('user/list',{page:this.state.curPage+1,page_size:10},(res)=> this.onUserList(res))
     }
 
     render(){
@@ -76,8 +85,10 @@ class ListPage extends React.Component {
                     })}
                     </tbody>
                 </table>
-                <div className='pull-left pagination'>
-                    <ul className='pagination'></ul>
+                <div className='pull-left pagination '>
+                    <button className='btn btn-success btn-xs margin-el' onClick={()=>this.onPrePage()}> Pre </button>
+                    
+                    <button className='btn btn-info btn-dark margin-el' onClick={()=>this.onNextPage()}> Next </button>
                 </div>
             </div>
         )
