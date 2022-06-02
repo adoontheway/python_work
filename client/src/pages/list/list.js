@@ -35,6 +35,7 @@ class ListPage extends React.Component {
             return (
                 <div className='container'>
                     <table>
+                    <thead>
                         <tr>
                             <th>Name</th>
                             <th>Phone</th>
@@ -43,6 +44,7 @@ class ListPage extends React.Component {
                             <th>Photo</th>
                             <th>Operation</th>
                         </tr>
+                        </thead>
                     </table>
                 </div>
             )
@@ -56,7 +58,7 @@ class ListPage extends React.Component {
                             <th>Phone</th>
                             <th>Address</th>
                             <th>Email</th>
-                            {/* <th>Photo</th> */}
+                            <th>Photo</th>
                             <th>Operation</th>
                         </tr>
                     </thead>
@@ -82,7 +84,7 @@ function UserItem(props) {
                 
                 <td>{props.data.address}</td>
                 <td>{props.data.email}</td>
-                {/* <td><img src={props.data.photo} alt=''></img></td> */}
+                <td><img src={'static/upload/'+props.data.photo} alt='header'></img></td>
                 <td>
                     <a className='btn btn-success btn-xs' href='#' onClick={()=>{alert("not implemented now")}}>Details</a>
                 </td>

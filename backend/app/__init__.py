@@ -6,10 +6,11 @@ from flask_cors import CORS
 
 def create_app(test_config=None):
     # instance_relative_config 告诉应用配置文件是相对于instance folder的相对路径
-    app  = Flask(__name__, instance_relative_config=True)
+    app  = Flask(__name__, instance_relative_config=True, static_folder='../static',static_url_path='/static')
     app.config.from_mapping(
         SECRET_KEY='dev', # 正式的时候需要改
         DATABASE=os.path.join(app.instance_path,'app.sqlite'), # sqlite存放位置
+        UPLOAD_FOLDER=os.path.join(os.getcwd(),"static/upload")
     )
     if test_config is None:
         app.config.from_pyfile('config.py',silent=True)

@@ -14,7 +14,7 @@ class Login extends React.Component {
         super(props);
         this.state = {
             email:"",
-            password:"",
+            name:"",
             login:false,
         }
     }
@@ -28,24 +28,28 @@ class Login extends React.Component {
     handlePasswordChanged(e){
         // console.log(e.target.value)
         this.setState({
-            password : e.target.value,
+            name : e.target.value,
         })
     }
     handleSubmit(e){
         e.preventDefault();
         let email = this.state.email;
-        let password = this.state.password;
+        let name = this.state.name;
         let formData = new FormData();
         formData.append("email", email);
-        formData.append('password', password);
+        formData.append('name', name);
         NetUtil.postForm('user/login',formData,(res)=>this.onLoginBack(res))
-        this.setState({
-            login : true,
-        });
+        
     }
 
     onLoginBack(res){
-        console.log(res)
+        if(res.status === 200 && res.data.code === 200){
+            this.setState({
+                login : true,
+            });
+        }else{
+            alert(res.data.msg);
+        }
     }
 
     render(){
@@ -69,13 +73,13 @@ class Login extends React.Component {
                         />
                     </div>
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Password</span>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Name</span>
                         <input 
-                            type="password" 
+                            type="name" 
                             required
-                            name="password" 
+                            name="name" 
                             className='form-control'
-                            value={this.state.password} 
+                            value={this.state.name} 
                             onChange={(e)=> this.handlePasswordChanged(e)}
                         />
                     </div>

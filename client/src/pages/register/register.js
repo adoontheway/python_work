@@ -76,10 +76,13 @@ class Register extends React.Component {
     }
 
     onSubmitBack(res){
-        console.log(res)
-        this.setState({
-            success:true
-        })
+        if(res.status === 200 && res.data.code === 200){
+            this.setState({
+                success:true
+            })
+        }else{
+            alert(res.data.msg)
+        }
     }
 
     render(){
