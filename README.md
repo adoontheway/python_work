@@ -10,7 +10,7 @@
 * cnpm
 
 ### Server
-* flask
+* flask,flask-cors
 * sqlite
 * conda
 
@@ -18,8 +18,14 @@
 please refer to [shcema.sql](./backend/schema.sql)
 
 ## How to use 
+
+install and start server in development mode
 ```sh
-./start.sh
+./start_server.sh
+```
+install and start client in development mode
+```sh
+./start_client.sh
 ```
 
 > `localhost:3000` is the client address
