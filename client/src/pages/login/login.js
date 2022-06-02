@@ -13,8 +13,8 @@ class Login extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            email:"",
-            phone:"",
+            username:"",
+            password:"",
             login:false,
         }
     }
@@ -22,22 +22,22 @@ class Login extends React.Component {
     handleUsernameChanged(e){
         // console.log(e.target.value)
         this.setState({
-            email : e.target.value,
+            username : e.target.value,
         })
     }
     handlePasswordChanged(e){
         // console.log(e.target.value)
         this.setState({
-            phone : e.target.value,
+            password : e.target.value,
         })
     }
     handleSubmit(e){
         e.preventDefault();
-        let email = this.state.email;
-        let phone = this.state.phone;
+        let username = this.state.username;
+        let password = this.state.password;
         let formData = new FormData();
-        formData.append("email", email);
-        formData.append('phone', phone);
+        formData.append("username", username);
+        formData.append('password', password);
         NetUtil.postForm('user/login',formData,(res)=>this.onLoginBack(res))
         
     }
@@ -58,29 +58,29 @@ class Login extends React.Component {
             return <Navigate to={"/list"} replace={true}/>
         }
         return (
-            <div className="container">
+            <div className="login-wrapper">
                     <img src={logo} className="App-logo" alt="logo" />
                 <h1>Login</h1>
                 <form onSubmit={(e)=>this.handleSubmit(e)} className="row">
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Email</span>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Username</span>
                         <input 
-                            type="email" 
+                            type="text" 
                             required
-                            name="email" 
+                            name="username" 
                             className='form-control'
-                            value={this.state.email} 
+                            value={this.state.username} 
                             onChange={(e)=> this.handleUsernameChanged(e)}
                         />
                     </div>
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Phone</span>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Password</span>
                         <input 
-                            type="text" 
+                            type="password" 
                             required
-                            name="phone" 
+                            name="password" 
                             className='form-control'
-                            value={this.state.phone} 
+                            value={this.state.password} 
                             onChange={(e)=> this.handlePasswordChanged(e)}
                         />
                     </div>

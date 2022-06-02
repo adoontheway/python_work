@@ -3,6 +3,8 @@ import functools
 import json
 from math import floor
 import os
+import random
+import string
 
 from flask import (
     Blueprint, current_app, flash, g, redirect, render_template, request, session, url_for
@@ -14,6 +16,12 @@ from app.db import get_db
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
+user_map = dict()
+
+def gen_token():
+    chars = string.ascii_letters + string.punctuation
+    return ''.join(random.choice(chars) for x in range(12))
+
 @bp.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
@@ -22,6 +30,7 @@ def register():
         phone = request.form['phone']
         email = request.form['email']
         address = request.form['address']
+        appointment = request.form['appointment']
         photo = request.files['photo']
         filename = secure_filename(photo.filename)
         app = current_app
@@ -33,12 +42,12 @@ def register():
             error = 'name is required'
         elif not email:
             error = 'email is required'
-        elif db.execute('SELECT id FROM t_user WHERE name=?',(name,)
-                ).fetchone() is not None:
-                error = 'User {} is already exsits.'.format(name)
+        # elif db.execute('SELECT id FROM t_appointment WHERE name=?',(name,)
+        #         ).fetchone() is not None:
+        #         error = 'User {} is already exsits.'.format(name)
         
         if error is None:
-            db.execute('INSERT INTO t_user (name, email, birthday,phone,address,photo) VALUES (?,?,?,?,?,?)',(name,email,birthday,phone,address,filename))
+            db.execute('INSERT INTO t_appointment (name, email, birthday,phone,address,photo,appointment) VALUES (?,?,?,?,?,?,?)',(name,email,birthday,phone,address,filename,appointment))
             db.commit()
             return {'code':200,'msg':'success'}
         
@@ -48,21 +57,21 @@ def register():
 @bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        phone = request.form['phone']
+        username = request.form['username']
+        password = request.form['password']
         db = get_db()
         error = None
-        user = db.execute('SELECT * FROM t_user WHERE email=?',(email,)).fetchone()
+        user = db.execute('SELECT * FROM t_user WHERE username=?',(username,)).fetchone()
         if  user is None:
-            error = 'Email not correct'
-        elif user['phone'] != phone:
-            error = 'Phone number and email is not match.'
+            error = 'Username not exsit'
+        elif user['password'] != password:
+            error = 'password dismatch.'
 
         if error is None:
             session.clear()
             session['user_id']=user['id']
-            #fixme hard code
-            token =  user['priority'] == 0 and "123" or "234"
+            token =  gen_token()
+            user_map[token]=user
             return {'code':200, 'msg':'success','token':token}
         
         return {'code':400,'msg':error}
@@ -80,10 +89,10 @@ def list():
     # priority = g.user['priority']
     # if priority != 100:
     #     return {'code':400, 'msg':'not authorized.'}
-    if token != "234":
-        return {'code':400, 'msg':'not authorized.'}
-    users = db.execute('SELECT * FROM t_user limit %d offset %d'%(pageSize,page*pageSize)).fetchall()
-    count = db.execute('SELECT COUNT(*) FROM t_user').fetchone()
+    if token == None:
+        return {'code':400, 'msg':'please login.'}
+    users = db.execute('SELECT * FROM t_appointment limit %d offset %d'%(pageSize,page*pageSize)).fetchall()
+    count = db.execute('SELECT COUNT(*) FROM t_appointment').fetchone()
     return {'code':200,
         'data':{ 'users':[
             {
@@ -92,7 +101,8 @@ def list():
                 'address':user['address'],
                 'email':user['email'],
                 'photo':user['photo'],
-                'birthday':user['birthday']
+                'birthday':user['birthday'],
+                'appointment': user['appointment']
             } for user in users
         ],
         'cur_page':page,

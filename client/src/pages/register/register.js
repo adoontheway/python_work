@@ -1,7 +1,6 @@
 
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import axios from 'axios';
+import DatePicker  from 'react-datepicker';
 import './register.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import NetUtil from '../../util/net';
@@ -19,6 +18,7 @@ class Register extends React.Component {
             email:"",
             address:"",
             photo:"",
+            appointment:'',
             success: false
         }
     }
@@ -31,6 +31,11 @@ class Register extends React.Component {
     handleBirthdayChanged(e){
         this.setState({
             birthday : e,
+        })
+    }
+    handleAppointChanged(e){
+        this.setState({
+            appointment:e,
         })
     }
     handlePhoneChanged(e){
@@ -53,8 +58,8 @@ class Register extends React.Component {
         var reader = new FileReader();
         var file = e.target.files[0];
         reader.onload = ()=>{
-            console.log('filenam:',file);
-            console.log('result:',reader.result);
+            // console.log('filenam:',file);
+            // console.log('result:',reader.result);
             this.setState({
                 photo: file,
                 imagePreviewUrl : reader.result,
@@ -71,6 +76,8 @@ class Register extends React.Component {
         formData.append('email', this.state.email);
         formData.append('address',this.state.address);
         formData.append('photo', this.state.photo);
+        let time = Date.parse(this.state.appointment)
+        formData.append('appointment', new Date(time).toLocaleString());
         
         NetUtil.postForm('user/register',formData,(res)=>{this.onSubmitBack(res)})
     }
@@ -90,7 +97,7 @@ class Register extends React.Component {
             return <Navigate to={"/list"} replace={true}/>
         }
         return (
-            <div className="container">
+            <div className="register-wrapper">
                 <h1>Register</h1>
                 <form onSubmit={(e)=>this.handleSubmit(e)} className="row">
                     <div className='input-group input-group-sm mb-3'>
@@ -163,6 +170,11 @@ class Register extends React.Component {
                             // value={this.state.photo} 
                             onChange={(e)=> this.handlePhotoChanged(e)}
                         />
+                    </div>
+                    <div className='input-group input-group-sm mb-3'>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Appointment</span>
+                        
+                        <DatePicker required showTimeSelect dateFormat='Pp' className='form-control' selected={this.state.appointment} onChange={(date)=>this.handleAppointChanged(date)}/>
                     </div>
                     <div className='d-grid gap-2'>
                             <input type="submit" className='btn btn-primary' value="Submit"/>

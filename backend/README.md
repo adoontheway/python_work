@@ -20,4 +20,4 @@ bash ./run.sh
     - [ ] uploaded filename should be unique, the name must be encoded by md5 and system time.
 2. login 
 3. user list
-    - [ ] auth is hard coded
+    - [x] auth is hard coded
