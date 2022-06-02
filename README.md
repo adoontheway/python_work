@@ -17,10 +17,13 @@
 ### db
 please refer to [shcema.sql](./backend/schema.sql)
 
-## How to run 
+## How to use 
 ```sh
 ./start.sh
 ```
+
+> `localhost:3000` is the client address
+> `localhost:5000` is the server address
 
 ## How to use
 * login: admin/admin is the admin account, register not support
