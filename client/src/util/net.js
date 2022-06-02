@@ -1,7 +1,9 @@
 
 import axios from "axios"
 
-const NetUtil = {}
+const NetUtil = {
+    config : {}
+}
 
 const Server_Root = "http://localhost:5000/"
 
@@ -12,7 +14,11 @@ NetUtil.get =  (url,callback)=>{
 }
 
 NetUtil.postJson = (url, data,callback)=>{
-    axios.post(Server_Root+url, data).then((res)=>{
+    let config = {
+        method:'post',
+        headers:{'Content-Type':'application/json',"token":NetUtil.config.token}
+    }
+    axios.post(Server_Root+url, data, config).then((res)=>{
         callback(res)
     })
 }
@@ -20,7 +26,8 @@ NetUtil.postJson = (url, data,callback)=>{
 NetUtil.postForm = (url, formData,callback)=>{
     let config = {
         method:'post',
-        headers:{'Content-Type':'multipart/form-data'}
+        headers:{'Content-Type':'multipart/form-data','token': NetUtil.config.token},
+        
     }
     axios.post(Server_Root+url, formData,config).then(res => {
         callback(res)

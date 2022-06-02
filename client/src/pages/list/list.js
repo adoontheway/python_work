@@ -14,18 +14,20 @@ class ListPage extends React.Component {
             users:Array(10).fill(null),
             curPage:-1,
             maxPage:-1,
+            pageSize:10,
         }
-        NetUtil.postJson('user/list',{page:0},(res)=> this.onUserList(res))
+        NetUtil.postJson('user/list',{page:0,page_size:10},(res)=> this.onUserList(res))
     }
 
     onUserList(res){
-        console.log(res);
-        if(res.data.code === 200){
+        if(res.status === 200 && res.data.code === 200){
             this.setState({
                 users:res.data.data.users,
                 curPage:res.data.data.cur_page,
                 maxPage:res.data.data.total_page,
             })
+        }else{
+            alert(res.data.msg)
         }
         
     }
@@ -34,7 +36,8 @@ class ListPage extends React.Component {
         if(this.state.curPage === -1){
             return (
                 <div className='container'>
-                    <table>
+                    <h1>User List</h1>
+                    <table className='table table-striped table-bordered table-responsive'>
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -44,13 +47,18 @@ class ListPage extends React.Component {
                             <th>Photo</th>
                             <th>Operation</th>
                         </tr>
+                        
                         </thead>
+                        <tbody>
+                            
+                        </tbody>
                     </table>
                 </div>
             )
         }
         return (
             <div className='container'>
+                <h1>User List</h1>
                 <table className='table table-striped table-bordered table-responsive'>
                     <thead>
                         <tr>

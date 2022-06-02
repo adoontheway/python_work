@@ -1,5 +1,6 @@
 from crypt import methods
 import functools
+import json
 import os
 
 from flask import (
@@ -47,45 +48,52 @@ def register():
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        name = request.form['name']
+        phone = request.form['phone']
         db = get_db()
         error = None
-        user = db.execute('SELECT * FROM t_user WHERE name=?',(name,)).fetchone()
+        user = db.execute('SELECT * FROM t_user WHERE email=?',(email,)).fetchone()
         if  user is None:
-            error = 'Name not exsits'
-        elif user['email'] != email:
-            error = 'Name or email incorrect.'
-        # elif not check_password_hash(user['password'],password):
-            # error = 'Incorrect password'
+            error = 'Email not correct'
+        elif user['phone'] != phone:
+            error = 'Phone number and email is not match.'
 
         if error is None:
             session.clear()
             session['user_id']=user['id']
-            return {'code':200, 'msg':'success'}
+            #fixme hard code
+            token =  user['priority'] == 0 and "123" or "234"
+            return {'code':200, 'msg':'success','token':token}
         
         return {'code':400,'msg':error}
     return {'code':400,'msg':'illegal request'}
 
-
-mock_users = [
-    {'name':'jim1','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim2','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim3','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim4','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim5','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim6','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim7','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim8','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim9','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim10','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim11','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim12','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim13','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'},
-    {'name':'jim14','address':'Canada','birthday':'1965/07/09','phone':'231234','email':'123@!123.com','photo':'111.png'}
-]
-@bp.route('/list', methods=['GET','POST'])
+@bp.route('/list', methods=['POST'])
 def list():
-    return {'code':200,'msg':'success','data':{ 'users':mock_users,'cur_page':0,'total_page':2}}
+    token = request.headers.get('token')
+    data = json.loads(request.data)
+    pageSize = data['page_size']
+    page = data['page']
+    db = get_db()
+    if g.user == None:
+        return {'code':400,'msg':'Please login first'}
+    priority = g.user['priority']
+    if priority != 100:
+        return {'code':400, 'msg':'not authorized.'}
+    users = db.execute('SELECT * FROM t_user limit %d offset %d'%(pageSize,page*pageSize)).fetchall()
+    count = db.execute('SELECT COUNT(*) FROM t_user').fetchone()
+    return {'code':200,
+        'data':{ 'users':[
+            {
+                'name':user['name'],
+                'phone':user['phone'],
+                'address':user['address'],
+                'email':user['email'],
+                'photo':user['photo'],
+                'birthday':user['birthday']
+            } for user in users
+        ],
+        'cur_page':0,
+        'total_page':count[0]}}
 
 # before each request check the user
 @bp.before_app_request
@@ -106,6 +114,6 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('user.login'))
         return view(**kwargs)
     return wrapped_view

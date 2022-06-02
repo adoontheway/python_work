@@ -14,7 +14,7 @@ class Login extends React.Component {
         super(props);
         this.state = {
             email:"",
-            name:"",
+            phone:"",
             login:false,
         }
     }
@@ -28,22 +28,23 @@ class Login extends React.Component {
     handlePasswordChanged(e){
         // console.log(e.target.value)
         this.setState({
-            name : e.target.value,
+            phone : e.target.value,
         })
     }
     handleSubmit(e){
         e.preventDefault();
         let email = this.state.email;
-        let name = this.state.name;
+        let phone = this.state.phone;
         let formData = new FormData();
         formData.append("email", email);
-        formData.append('name', name);
+        formData.append('phone', phone);
         NetUtil.postForm('user/login',formData,(res)=>this.onLoginBack(res))
         
     }
 
     onLoginBack(res){
         if(res.status === 200 && res.data.code === 200){
+            NetUtil.config['token'] = res.data.token;
             this.setState({
                 login : true,
             });
@@ -73,13 +74,13 @@ class Login extends React.Component {
                         />
                     </div>
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Phone</span>
                         <input 
-                            type="name" 
+                            type="text" 
                             required
-                            name="name" 
+                            name="phone" 
                             className='form-control'
-                            value={this.state.name} 
+                            value={this.state.phone} 
                             onChange={(e)=> this.handlePasswordChanged(e)}
                         />
                     </div>
