@@ -49,9 +49,18 @@ class Register extends React.Component {
         })
     }
     handlePhotoChanged(e){
-        this.setState({
-            photo : e.target.files[0],
-        })
+        e.preventDefault();
+        var reader = new FileReader();
+        var file = e.target.files[0];
+        reader.onload = ()=>{
+            console.log('filenam:',file);
+            console.log('result:',reader.result);
+            this.setState({
+                photo: file,
+                imagePreviewUrl : reader.result,
+            })
+        }
+        reader.readAsDataURL(file);
     }
     handleSubmit(e){
         e.preventDefault();
@@ -62,7 +71,8 @@ class Register extends React.Component {
         formData.append('email', this.state.email);
         formData.append('address',this.state.address);
         formData.append('photo', this.state.photo);
-        NetUtil.postForm('http://localhost:8080/user/register',formData,(res)=>{this.onSubmitBack(res)})
+        
+        NetUtil.postForm('user/register',formData,(res)=>{this.onSubmitBack(res)})
     }
 
     onSubmitBack(res){
@@ -147,7 +157,7 @@ class Register extends React.Component {
                             name="photo" 
                             accept='image/*'
                             className='form-control'
-                            value={this.state.photo} 
+                            // value={this.state.photo} 
                             onChange={(e)=> this.handlePhotoChanged(e)}
                         />
                     </div>
@@ -156,6 +166,9 @@ class Register extends React.Component {
                     </div>
                     
                 </form>
+                {/* <div className='d-grid gap-2'> */}
+                        <a className='pull-right' href='./'>I aleady have account</a>
+                    {/* </div> */}
             </div>
         )
     }

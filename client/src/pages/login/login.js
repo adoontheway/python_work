@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 import './login.css';
 import logo from '../../logo.svg';
+import NetUtil from '../../util/net';
 
 
 class Login extends React.Component {
@@ -12,7 +13,7 @@ class Login extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            username:"",
+            email:"",
             password:"",
             login:false,
         }
@@ -21,7 +22,7 @@ class Login extends React.Component {
     handleUsernameChanged(e){
         // console.log(e.target.value)
         this.setState({
-            username : e.target.value,
+            email : e.target.value,
         })
     }
     handlePasswordChanged(e){
@@ -32,16 +33,19 @@ class Login extends React.Component {
     }
     handleSubmit(e){
         e.preventDefault();
-        let username = this.state.username;
+        let email = this.state.email;
         let password = this.state.password;
-        fetch('http://localhost:8080/user/login',{
-            method:'POST',
-            mode:'cors',
-            body:JSON.stringify({username:username, password:password})
-        })
+        let formData = new FormData();
+        formData.append("email", email);
+        formData.append('password', password);
+        NetUtil.postForm('user/login',formData,(res)=>this.onLoginBack(res))
         this.setState({
             login : true,
         });
+    }
+
+    onLoginBack(res){
+        console.log(res)
     }
 
     render(){
@@ -54,13 +58,13 @@ class Login extends React.Component {
                 <h1>Login</h1>
                 <form onSubmit={(e)=>this.handleSubmit(e)} className="row">
                     <div className='input-group input-group-sm mb-3'>
-                        <span className="input-group-text" id="inputGroup-sizing-sm">Username</span>
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Email</span>
                         <input 
-                            type="text" 
+                            type="email" 
                             required
-                            name="username" 
+                            name="email" 
                             className='form-control'
-                            value={this.state.username} 
+                            value={this.state.email} 
                             onChange={(e)=> this.handleUsernameChanged(e)}
                         />
                     </div>
@@ -79,6 +83,10 @@ class Login extends React.Component {
                     <div className='d-grid gap-2'>
                             <input type="submit" className='btn btn-primary' value="Submit"/>
                     </div>
+
+                    {/* <div className='d-grid gap-2'> */}
+                        <a className='pull-right' href='./register'>I have no account</a>
+                    {/* </div> */}
                     
                 </form>
                 

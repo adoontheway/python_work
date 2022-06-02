@@ -1,6 +1,19 @@
 # python_work
 
 
+# Tech Stack
+
+## Client
+* react/react-datepicker
+* axios
+* bootstrap
+* cnpm
+
+## Server
+* django
+* conda
+
+# Design
 ## Restful Api
 | api | method | Data| Description |
 |----------|--------|-------------|----------|
@@ -10,9 +23,11 @@
 |user/list|post|None|list all users, only for admin?|
 |user/logout|get|None|logout the server|
 
-## DB
 
-### Mongo
+## Storage
+
+### 1.Mongo
+I can not sure docker is install on you guys device.
 docker + mongodb
 ```js
 {
@@ -26,9 +41,22 @@ docker + mongodb
     'token':string
 }
 ```
-### sqlite
+### 2.sqlite
 ```sql
-CREATE TABLE t_user IF NOT EXSIT {
 
-}
 ```
+### 3.local file system
+
+```sh
+./data/dat
+```
+| name | byte-length | description |
+| ------- | -------- | ----------- |
+| version   | 8 | .dat version |
+| enc type | 8 | data encryption type |
+| compress algorithm| 8 | compress algorithm type |
+| length | 32 | data length |
+| data | length | the local data itself |
+
+## Test
+no time for unit test now
